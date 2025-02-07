@@ -134,15 +134,13 @@ RAVL_Node* leftRightRotation(RAVL_Node* node){
 /* Returns the parent node of successor node of 'node'. */
 RAVL_Node* successor(RAVL_Node* node){
   RAVL_Node* rTree = node->right;
-  RAVL_Node* pNode = node->right;
   if (rTree) {
     while (rTree->left != NULL){
-      pNode = rTree;
       rTree = rTree->left;
     }
-    return pNode;
+    return rTree;
   }
-  return pNode;
+  return rTree;
 };
 
 /* Creates and returns an RAVL tree node with key 'key', value 'value', height
@@ -262,13 +260,36 @@ RAVL_Node* insert(RAVL_Node* node, int key, void* value) {
 }
 
 RAVL_Node* delete(RAVL_Node* node, int key) {
-  RAVL_Node* nodeD = search(node, key);
-  if (nodeD) {
-    RAVL_Node* successor_pNode = successor(nodeD); 
+  if (node == NULL) {
+    return node;
   }
 
- }
+  if (node->key > key) {
+    node->left = delete(node->left, key);
+  }
+  else if (node->key < key) {
+    node->right = delete(node->right, key);
+  }
+  else {
+    if (node->left == NULL && node->right == NULL) {
+      free(node);
+      return NULL;
+    }
+    if (node->left == NULL || node->right == NULL) {
+      RAVL_Node* temp = (node->left) ? node->left : node->right;
+      free(node);
+      return temp;
+    }
+    RAVL_Node* successor_node = successor(node);
+    node->key = successor_node->key;
+    node->value = successor_node->value;
+    node->right = delete(node->right, successor_node->key);
+  }
+  balanceTree(node);
+}
 
-int rank(RAVL_Node* node, int key) { return NOTIN; }
+int rank(RAVL_Node* node, int key) { 
+    ////////////////////////////
+}
 
 RAVL_Node* findRank(RAVL_Node* node, int rank) { return NULL; }
